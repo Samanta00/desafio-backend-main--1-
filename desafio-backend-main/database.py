@@ -2,9 +2,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "mysql+pymysql://root:ElS895623!@localhost:3307/git_analysis_results.db"
+DATABASE_URL = "sqlite:///git_analysis_results.db"
 
-# Cria a conexão com o banco de dadps
 engine = create_engine(DATABASE_URL, echo=True)
 
 # Cria a base declarativa
