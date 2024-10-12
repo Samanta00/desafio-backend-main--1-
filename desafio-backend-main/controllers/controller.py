@@ -7,56 +7,60 @@ from model.model import GitAnalysisResult, Session
 
 def git_analysis():
     print('teste 1234')
-    usuario = request.args.get('usuario')
-    repositorio = request.args.get('repositorio')
+    sessao = None
 
-    repo_url = f'https://github.com/{usuario}/{repositorio}.git'
-    repo_dir = 'diretorio_local_repositorio'
+    try:
+        usuario = request.args.get('usuario')
+        repositorio = request.args.get('repositorio')
 
-    # Remove o repositório se já existir
-    if os.path.exists(repo_dir):
-        shutil.rmtree(repo_dir)
+        repo_url = f'https://github.com/{usuario}/{repositorio}.git'
+        repo_dir = 'diretorio_local_repositorio'
 
-    # Clona o repositório
-    repo = git.Repo.clone_from(repo_url, repo_dir)
+        # Remove o repositório se já existir
+        if os.path.exists(repo_dir):
+            shutil.rmtree(repo_dir)
 
-    # Inicializa dicionário para armazenar os commits por desenvolvedor
-    commits_por_desenvolvedor = {}
-    dias_por_desenvolvedor = {}
+        # Clona o repositório
+        repo = git.Repo.clone_from(repo_url, repo_dir)
 
-    # Itera pelo histórico de commits
-    for commit in repo.iter_commits():
-        autor = commit.author.name
-        commits_por_desenvolvedor[autor] = commits_por_desenvolvedor.get(autor, 0) + 1
+        # Inicializa dicionário para armazenar os commits por desenvolvedor
+        commits_por_desenvolvedor = {}
+        dias_por_desenvolvedor = {}
 
-        data_commit = commit.committed_datetime.date()
-        if autor not in dias_por_desenvolvedor:
-            dias_por_desenvolvedor[autor] = {data_commit}
-        else:
-            dias_por_desenvolvedor[autor].add(data_commit)
+        # Itera pelo histórico de commits
+        for commit in repo.iter_commits():
+            autor = commit.author.name
+            commits_por_desenvolvedor[autor] = commits_por_desenvolvedor.get(autor, 0) + 1
 
-    response = ''
-    session = Session()
+            data_commit = commit.committed_datetime.date()
+            if autor not in dias_por_desenvolvedor:
+                dias_por_desenvolvedor[autor] = {data_commit}
+            else:
+                dias_por_desenvolvedor[autor].add(data_commit)
 
-    # Retorna o total de commits e a média de commits por dia por desenvolvedor
-    for autor, commits in commits_por_desenvolvedor.items():
-        dias = len(dias_por_desenvolvedor[autor])
-        media_commits_por_dia = commits / dias
-        response += f'{autor} realizou {commits} commits com uma média de {media_commits_por_dia:.2f} commits por dia.<br>'
+        response = ''
+        session = Session()
 
-        result = GitAnalysisResult(
-            author=autor,
-            analyze_date=datetime.now(),
-            average_commits=media_commits_por_dia,
-            repository_url=repo_url,
-            repository_name=repositorio
-        )
-        session.add(result)
+        # Retorna o total de commits e a média de commits por dia por desenvolvedor
+        for autor, commits in commits_por_desenvolvedor.items():
+            dias = len(dias_por_desenvolvedor[autor])
+            media_commits_por_dia = commits / dias
+            response += f'{autor} realizou {commits} commits com uma média de {media_commits_por_dia:.2f} commits por dia.<br>'
 
-    session.commit()
-    session.close()
+            result = GitAnalysisResult(
+                author=autor,
+                analyze_date=datetime.now(),
+                average_commits=media_commits_por_dia,
+                repository_url=repo_url,
+                repository_name=repositorio
+            )
+            session.add(result)
 
-    return response
+        session.commit()
+        session.close()
+    finally:
+        print('chegou ao fim')
+        # return response
 
 
 def buscar_medias_de_commit():
