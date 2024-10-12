@@ -27,15 +27,15 @@ def test_git_analysis(flask_app):
         # A resposta de result é um HTML, precisamos verificar se contém o esperado
         assert 'Sebastian Thiel possui uma média de 2.95 commits por dia.' in result
 
-# def test_git_analysis_no_repo(flask_app):
-#     # Usando patch para simular o comportamento do git.Repo.clone_from
-#     with patch('git.Repo.clone_from') as mock_clone:
-#         mock_clone.side_effect = git.exc.GitCommandError('Clone failed', 128)
+def test_git_analysis_no_repo(flask_app):
+    # Usando patch para simular o comportamento do git.Repo.clone_from
+    with patch('git.Repo.clone_from') as mock_clone:
+        mock_clone.side_effect = git.exc.GitCommandError('Clone failed', 128)
         
-#         with flask_app.test_request_context(
-#             '/?usuario=nonexistent-user&repositorio=nonexistent-repo'
-#         ):
-#             with pytest.raises(git.exc.GitCommandError):
-#                 # Certifique-se de que a função que chama clone_from é a que está sendo testada
-#                 api.git_analysis()
+        with flask_app.test_request_context(
+            '/?usuario=nonexistent-user&repositorio=nonexistent-repo'
+        ):
+            with pytest.raises(git.exc.GitCommandError):
+                # Certifique-se de que a função que chama clone_from é a que está sendo testada
+                api.git_analysis()
 
