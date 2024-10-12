@@ -52,10 +52,14 @@ def git_analysis():
             session.add(result)
 
         session.commit()
-    except git.exc.GitCommandError as e:
-        return jsonify({"error": str(e)}), 400
+        
+        if not resultados:
+            return jsonify({"error": "Nenhum commit encontrado para o repositório."}), 404
+
+    except git.exc.GitCommandError:
+        return jsonify({"error": "Não foi possível acessar o repositório. Verifique o usuário e o repositório informados."}), 400
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": "Ocorreu um erro inesperado."}), 500
     finally:
         if session:  
             session.close()
@@ -63,6 +67,7 @@ def git_analysis():
             shutil.rmtree(repo_dir) 
 
     return jsonify({"resultados": resultados})
+
 
 
 def buscar_medias_de_commit():
