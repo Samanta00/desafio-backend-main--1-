@@ -1,9 +1,10 @@
+from flask import request, jsonify
 import os
 import shutil
 from datetime import datetime
-from flask import request, jsonify
 import git
-from model.model import GitAnalysisResult, Session
+from database import get_db
+from model.model import GitAnalysisResult
 
 def git_analysis():
     session = None  
@@ -33,7 +34,7 @@ def git_analysis():
             data_commit = commit.committed_datetime.date()
             dias_por_desenvolvedor.setdefault(autor, set()).add(data_commit)
 
-        session = Session() 
+        session = next(get_db())
 
         resultados = []
         for autor, commits in commits_por_desenvolvedor.items():
@@ -63,27 +64,25 @@ def git_analysis():
 
     return jsonify({"resultados": resultados})
 
+
 def buscar_medias_de_commit():
-    session = None  
-    try:
-        autor1 = request.args.get('autor1')
-        autor2 = request.args.get('autor2')
-        autor3 = request.args.get('autor3')
-        autores = [autor1, autor2, autor3]
+    autor1 = request.args.get('autor1')
+    autor2 = request.args.get('autor2')
+    autor3 = request.args.get('autor3')
+    autores = [autor1, autor2, autor3]
 
-        session = Session() 
-        resultados = []
+    session = next(get_db())
 
-        for autor in autores:
-            if autor:  
-                registros = session.query(GitAnalysisResult).filter(GitAnalysisResult.author.ilike(f"%{autor}%")).all()
-                for registro in registros:
-                    resultados.append(f'{registro.author} possui uma média de {registro.average_commits:.2f} commits por dia.')
+    resultados = []
+    for autor in autores:
+        registros = session.query(GitAnalysisResult).filter(GitAnalysisResult.author.ilike(f"%{autor}%")).all()
         
-        resultados_nao_duplicados = set(resultados)
-        return jsonify({"resultados": list(resultados_nao_duplicados)})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        if session:  
-            session.close()
+        if not registros: 
+            resultados.append(f'Nenhum registro encontrado para {autor}.')
+        else:
+            for registro in registros:
+                resultados.append(f'{registro.author} possui uma média de {registro.average_commits:.2f} commits por dia.')
+
+    session.close() 
+    resultados_nao_duplicados = set(resultados)  
+    return "<br>".join(resultados_nao_duplicados)
