@@ -83,11 +83,12 @@ def buscar_medias_de_commit():
         registros = session.query(GitAnalysisResult).filter(GitAnalysisResult.author.ilike(f"%{autor}%")).all()
         
         if not registros: 
-            resultados.append(f'Nenhum registro encontrado para {autor}.')
+            resultados.append(f'nenhum registro encontrado para {autor}.'.lower())
         else:
             for registro in registros:
-                resultados.append(f'{registro.author} possui uma média de {registro.average_commits:.2f} commits por dia.')
+                resultados.append(f'{registro.author.lower()} possui uma média de {registro.average_commits:.2f} commits por dia.'.lower())
 
     session.close() 
     resultados_nao_duplicados = set(resultados)  
     return "<br>".join(resultados_nao_duplicados)
+
