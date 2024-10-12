@@ -1,7 +1,7 @@
 import os
 import shutil
 from datetime import datetime
-from flask import request
+from flask import request, jsonify
 import git
 from model.model import GitAnalysisResult, Session
 
