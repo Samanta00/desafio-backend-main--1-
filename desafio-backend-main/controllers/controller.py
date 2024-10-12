@@ -3,9 +3,10 @@ import shutil
 from datetime import datetime
 from flask import request
 import git
-from models import GitAnalysisResult, Session
+from model.model import GitAnalysisResult, Session
 
 def git_analysis():
+    print('teste 1234')
     usuario = request.args.get('usuario')
     repositorio = request.args.get('repositorio')
 
