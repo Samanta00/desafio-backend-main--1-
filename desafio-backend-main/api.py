@@ -5,7 +5,6 @@ app = Flask(__name__)
 
 @app.route('/analisador-git', methods=['GET'])
 def analisar_git():
-    print('chegou aqui')
     return git_analysis()
 
 @app.route('/analisador-git/buscar', methods=['GET'])
