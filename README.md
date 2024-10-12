@@ -1,46 +1,29 @@
-# Desafio técnico PontoTel para vagas back-end
-Esse repositório contém o código usado para avaliação de candidados a vagas de desenvolvedor(a) back-end.
+# Desafio técnico
 
-O desafio consiste em melhorar o código aqui encontrado e resolver possíveis problemas.
 
-## Objetivo do projeto
-O objetivo do projeto é oferecer 2 rotas de uma API em que cada uma terá o seguinte comportamento:
-- `/analisador-git?usuario=...&repositorio=...`: Realiza uma análise em um repositório público do GitHub onde será retornado a quantidade de commits por autor e a média de commits por dia trabalhado;
-- `/analisador-git/buscar?autor1=...&autor2=...&autor3=...`:  Responsável por buscar análises de commits já realizadas anteriormente para os autores informados nos parâmetros autor1, autor2 e autor3. Pelo menos um dos parâmetros deve ser informado para obter um resultado.
 
-## Critérios que serão avaliados
 
-- Reorganização dos arquivos e pastas do projeto
-- Normalizar o banco de dados
-- Gerenciamento do diretório local usado para clonar o repositório
-    - O código deve ser capaz de ser executado concorrentemente sem afetar os resultados de outros processos
-    - O repositório deve ser descartado após a análise (pelo seu código ou pelo sistema operacional)
-- Tratar possíveis erros externos e retornar uma resposta com o código 400
-- Evitar loops desnecessários e otimizar execução do código
-- Gerenciar corretamente sessões do banco de dados
-- Gerenciar corretamente a criação das tabelas no banco de dados
-    - Uso de migrations com o alembic para o versionamento da estrutura do banco
-- Reaproveitar e reestruturar o código de forma clara e eficiente
-- Otimizar uso do banco de dados e evitar consultas desnecessárias
-- Criar testes unitários e/ou de integração para novas classes e funções
-- Evitar que os testes falhem por dependências externas
-- Atribuir tipos a classes, funções e variáveis
-- BÔNUS: Criar um Dockerfile para a execução do projeto em um container
+## Autora: Ellen Samanta
 
-A conclusão de todos os critérios não é uma obrigação, porém quanto mais critérios forem concluídos, mais chances você terá de melhorar a sua avaliação.
+## Para rodar o projeto, entre na pasta desafio-backend-main e digite no terminal:  python3 api.py
+## Para executar o arquivo docker, entre na pasta docker e digite : docker-compose -f docker-compose.yaml up -d
 
-Cada critério possui um peso diferente que seguirá a sua dificuldade para ser atingido.
+## ao executar a rota[GET] Pelo insominia/Postman, você pode escrever tanto maiusculo quanto minusculo no campo de nomes, exemplo
+## ('http://127.0.0.1:5000/analisador-git/buscar?autor1=OCTOCAT&autor2=johnneylee&autor3=cameronmcefee')
 
-### RESOLVA O DESAFIO SEM O USO DE NOVAS DEPENDÊNCIAS
+## Você terá um retorno: 
+### Johnneylee Jack Rollins possui uma média de 1.00 commits por dia.
+### cameronmcefee possui uma média de 1.00 commits por dia.
+### The Octocat possui uma média de 1.00 commits por dia.
 
-# Como executar em sua máquina
 
-## Servidor
-- Garanta que a sua máquina possui o Python 3.9
-- Faça a instalação do Poetry (https://python-poetry.org/docs/#installation)
-- Em um terminal, navegue até a raiz desse projeto e execute o comando `poetry install`
-- Entre no ambiente criado pelo poetry usando o comando `poetry shell`
-- Execute o projeto digitando `python api.py`
+## ao executar a rota[GET]('http://127.0.0.1:5000/analisador-git/buscar?autor1=octocat&autor2=Johnneylee&autor3=cameronmcefee')
+## você terá um retorno: 
 
-## Testes
-Para executar os testes basta escrever em um terminal na raiz do projeto: `pytest tests.py`
+{
+    "resultados": [
+        "The Octocat realizou 1 commits com uma média de 1.00 commits por dia.",
+        "Johnneylee Jack Rollins realizou 1 commits com uma média de 1.00 commits por dia.",
+        "cameronmcefee realizou 1 commits com uma média de 1.00 commits por dia."
+    ]
+}
