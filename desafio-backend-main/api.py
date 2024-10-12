@@ -1,10 +1,11 @@
 from flask import Flask
-from controllers import git_analysis, buscar_medias_de_commit
+from controllers.controller import git_analysis, buscar_medias_de_commit
 
 app = Flask(__name__)
 
 @app.route('/analisador-git', methods=['GET'])
 def analisar_git():
+    print('chegou aqui')
     return git_analysis()
 
 @app.route('/analisador-git/buscar', methods=['GET'])
